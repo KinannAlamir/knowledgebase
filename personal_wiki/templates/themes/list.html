@@ -9,18 +9,19 @@
 {% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <div>
-        <h1>Your Knowledge Base</h1>
-        <p class="subtitle">Organise your knowledge into themes and subthemes</p>
-    </div>
-    {% if is_admin %}<a href="/themes/new" class="btn btn-primary">+ New Theme</a>{% endif %}
-</div>
-
 {% if themes %}
-<div class="card-grid">
+<div class="bento-grid">
+    {# Hero tile #}
+    <div class="bento-hero">
+        <p class="bento-hero-sub">Your Knowledge Base</p>
+        <h1 class="bento-hero-title">Everything<br>you know,<br>organised.</h1>
+        {% if is_admin %}
+        <a href="/themes/new" class="btn btn-primary" style="margin-top:auto">+ New Theme</a>
+        {% endif %}
+    </div>
+
     {% for theme in themes %}
-    <a href="/themes/{{ theme.id }}" class="card card-hover">
+    <a href="/themes/{{ theme.id }}" class="card card-hover bento-card">
         <div class="card-body">
             <h3 class="card-title">{{ theme.title }}</h3>
             {% if theme.description %}
@@ -36,10 +37,19 @@
     {% endfor %}
 </div>
 {% else %}
-<div class="empty-state">
-    <h2>No themes yet</h2>
-    <p>Create your first theme to start building your knowledge base.</p>
-    {% if is_admin %}<a href="/themes/new" class="btn btn-primary">Create First Theme</a>{% endif %}
+<div class="bento-grid">
+    <div class="bento-hero">
+        <p class="bento-hero-sub">Your Knowledge Base</p>
+        <h1 class="bento-hero-title">Everything<br>you know,<br>organised.</h1>
+        {% if is_admin %}
+        <a href="/themes/new" class="btn btn-primary" style="margin-top:auto">+ New Theme</a>
+        {% endif %}
+    </div>
+    <div class="empty-state">
+        <h2>No themes yet</h2>
+        <p>Create your first theme to start building your knowledge base.</p>
+        {% if is_admin %}<a href="/themes/new" class="btn btn-primary">Create First Theme</a>{% endif %}
+    </div>
 </div>
 {% endif %}
 {% endblock %}
