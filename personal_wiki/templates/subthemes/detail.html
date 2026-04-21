@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}{{ subtheme.title }} – Personal Wiki{% endblock %}
+
+{% block breadcrumb %}
+<a href="/themes/">Home</a>
+<span class="sep">›</span>
+<a href="/themes/{{ theme.id }}">{{ theme.title }}</a>
+<span class="sep">›</span>
+<span>{{ subtheme.title }}</span>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>{{ subtheme.title }}</h1>
+        {% if subtheme.description %}
+        <p class="subtitle">{{ subtheme.description }}</p>
+        {% endif %}
+    </div>
+    <div class="btn-group">
+        {% if is_admin %}
+        <a href="/themes/{{ theme.id }}/subthemes/{{ subtheme.id }}/articles/new" class="btn btn-primary">+ New Article</a>
+        <a href="/themes/{{ theme.id }}/subthemes/{{ subtheme.id }}/edit" class="btn btn-secondary">Edit</a>
+        <form method="post" action="/themes/{{ theme.id }}/subthemes/{{ subtheme.id }}/delete"
+              class="inline-form" onsubmit="return confirm('Delete this subtheme and all its articles?')">
+            <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+
+{% if subtheme.articles %}
+<div class="article-list">
+    {% for article in subtheme.articles %}
+    <a href="/themes/{{ theme.id }}/subthemes/{{ subtheme.id }}/articles/{{ article.id }}"
+       class="article-card card-hover">
+        <div class="article-card-body">
+            <h3 class="article-title">{{ article.title }}</h3>
+            <p class="article-preview">{{ article.content | truncate_html }}</p>
+            <div class="card-meta">
+                <span>{{ article.created_at.strftime('%b %d, %Y') if article.created_at }}</span>
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <h2>No articles yet</h2>
+    <p>Write your first article in "{{ subtheme.title }}".</p>
+    {% if is_admin %}
+    <a href="/themes/{{ theme.id }}/subthemes/{{ subtheme.id }}/articles/new" class="btn btn-primary">
+        Write First Article
+    </a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

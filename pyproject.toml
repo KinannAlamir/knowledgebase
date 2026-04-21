@@ -1,0 +1,50 @@
+[project]
+name = "personal-wiki"
+version = "0.1.0"
+description = "A personal knowledge base website"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.30.0",
+    "sqlalchemy>=2.0.0",
+    "aiosqlite>=0.20.0",
+    "jinja2>=3.1.0",
+    "python-multipart>=0.0.9",
+    "pillow>=10.0.0",
+    "greenlet>=3.4.0",
+    "python-dotenv>=1.2.2",
+    "itsdangerous>=2.2.0",
+]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "N",    # pep8-naming
+    "UP",   # pyupgrade
+    "B",    # flake8-bugbear
+    "SIM",  # flake8-simplify
+    "TCH",  # flake8-type-checking
+    "RUF",  # ruff-specific rules
+]
+ignore = [
+    "E501",   # line too long (handled by formatter)
+    "B008",   # function call in default argument (standard FastAPI pattern for Depends/Form)
+    "TC002",  # move third-party import into type-checking block (breaks FastAPI DI)
+    "TC003",  # move stdlib import into type-checking block
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["personal_wiki"]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.15.11",
+]

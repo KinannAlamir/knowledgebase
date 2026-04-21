@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Edit' if subtheme else 'New' }} Subtheme – Personal Wiki{% endblock %}
+
+{% block breadcrumb %}
+<a href="/themes/">Home</a>
+<span class="sep">›</span>
+<a href="/themes/{{ theme.id }}">{{ theme.title }}</a>
+<span class="sep">›</span>
+{% if subtheme %}
+<a href="/themes/{{ theme.id }}/subthemes/{{ subtheme.id }}">{{ subtheme.title }}</a>
+<span class="sep">›</span>
+<span>Edit</span>
+{% else %}
+<span>New Subtheme</span>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>{{ 'Edit' if subtheme else 'New' }} Subtheme</h1>
+</div>
+
+<div class="form-container">
+    <form method="post"
+          action="{{ '/themes/' ~ theme.id ~ '/subthemes/' ~ subtheme.id ~ '/edit' if subtheme else '/themes/' ~ theme.id ~ '/subthemes/new' }}">
+        <div class="form-group">
+            <label for="title">Title <span class="required">*</span></label>
+            <input type="text" id="title" name="title" value="{{ subtheme.title if subtheme else '' }}"
+                   class="form-input" required placeholder="e.g. Python Basics, Organic Chemistry…">
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" name="description" class="form-input" rows="3"
+                      placeholder="A brief description…">{{ subtheme.description if subtheme else '' }}</textarea>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                {{ 'Save Changes' if subtheme else 'Create Subtheme' }}
+            </button>
+            <a href="{{ '/themes/' ~ theme.id ~ '/subthemes/' ~ subtheme.id if subtheme else '/themes/' ~ theme.id }}"
+               class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

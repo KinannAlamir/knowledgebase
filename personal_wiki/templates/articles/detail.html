@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}{{ article.title }} – Personal Wiki{% endblock %}
+
+{% block breadcrumb %}
+<a href="/themes/">Home</a>
+<span class="sep">›</span>
+<a href="/themes/{{ theme.id }}">{{ theme.title }}</a>
+<span class="sep">›</span>
+<a href="/themes/{{ theme.id }}/subthemes/{{ subtheme.id }}">{{ subtheme.title }}</a>
+<span class="sep">›</span>
+<span>{{ article.title }}</span>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>{{ article.title }}</h1>
+        <div class="card-meta">
+            <span>Created {{ article.created_at.strftime('%B %d, %Y at %H:%M') if article.created_at }}</span>
+            {% if article.updated_at and article.updated_at != article.created_at %}
+            <span class="dot">·</span>
+            <span>Updated {{ article.updated_at.strftime('%B %d, %Y at %H:%M') }}</span>
+            {% endif %}
+        </div>
+    </div>
+    <div class="btn-group">
+        {% if is_admin %}
+        <a href="/themes/{{ theme.id }}/subthemes/{{ subtheme.id }}/articles/{{ article.id }}/edit"
+           class="btn btn-primary">Edit
+        </a>
+        <form method="post"
+              action="/themes/{{ theme.id }}/subthemes/{{ subtheme.id }}/articles/{{ article.id }}/delete"
+              class="inline-form" onsubmit="return confirm('Delete this article?')">
+            <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+
+<article class="article-content prose">
+    {{ article.content | safe }}
+</article>
+{% endblock %}

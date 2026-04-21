@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}All Themes – Personal Wiki{% endblock %}
+
+{% block breadcrumb %}
+<a href="/themes/">Home</a>
+<span class="sep">›</span>
+<span>All Themes</span>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Your Knowledge Base</h1>
+        <p class="subtitle">Organise your knowledge into themes and subthemes</p>
+    </div>
+    {% if is_admin %}<a href="/themes/new" class="btn btn-primary">+ New Theme</a>{% endif %}
+</div>
+
+{% if themes %}
+<div class="card-grid">
+    {% for theme in themes %}
+    <a href="/themes/{{ theme.id }}" class="card card-hover">
+        <div class="card-body">
+            <h3 class="card-title">{{ theme.title }}</h3>
+            {% if theme.description %}
+            <p class="card-desc">{{ theme.description }}</p>
+            {% endif %}
+            <div class="card-meta">
+                <span>{{ theme.subthemes | length }} subtheme{{ 's' if theme.subthemes | length != 1 }}</span>
+                <span class="dot">·</span>
+                <span>{{ theme.created_at.strftime('%b %d, %Y') if theme.created_at }}</span>
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <h2>No themes yet</h2>
+    <p>Create your first theme to start building your knowledge base.</p>
+    {% if is_admin %}<a href="/themes/new" class="btn btn-primary">Create First Theme</a>{% endif %}
+</div>
+{% endif %}
+{% endblock %}

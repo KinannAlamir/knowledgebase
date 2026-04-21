@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}{{ theme.title }} – Personal Wiki{% endblock %}
+
+{% block breadcrumb %}
+<a href="/themes/">Home</a>
+<span class="sep">›</span>
+<span>{{ theme.title }}</span>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>{{ theme.title }}</h1>
+        {% if theme.description %}
+        <p class="subtitle">{{ theme.description }}</p>
+        {% endif %}
+    </div>
+    <div class="btn-group">
+        {% if is_admin %}
+        <a href="/themes/{{ theme.id }}/subthemes/new" class="btn btn-primary">+ New Subtheme</a>
+        <a href="/themes/{{ theme.id }}/edit" class="btn btn-secondary">Edit</a>
+        <form method="post" action="/themes/{{ theme.id }}/delete" class="inline-form"
+              onsubmit="return confirm('Delete this theme and all its contents?')">
+            <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+
+{% if theme.subthemes %}
+<div class="card-grid">
+    {% for sub in theme.subthemes %}
+    <a href="/themes/{{ theme.id }}/subthemes/{{ sub.id }}" class="card card-hover">
+        <div class="card-body">
+            <h3 class="card-title">{{ sub.title }}</h3>
+            {% if sub.description %}
+            <p class="card-desc">{{ sub.description }}</p>
+            {% endif %}
+            <div class="card-meta">
+                <span>{{ sub.created_at.strftime('%b %d, %Y') if sub.created_at }}</span>
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <h2>No subthemes yet</h2>
+    <p>Add subthemes to organise content within "{{ theme.title }}".</p>
+    {% if is_admin %}
+    <a href="/themes/{{ theme.id }}/subthemes/new" class="btn btn-primary">Add First Subtheme</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}
