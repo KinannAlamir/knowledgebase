@@ -3,8 +3,9 @@
 
 /* ===== CSS Variables ===== */
 :root {
-    --bg: #faf8f3;
+    --bg: #f5f3ee;
     --bg-card: #fffef9;
+    --bg-card-alt: #f0ede6;
     --bg-sidebar: #1c1917;
     --bg-input: #fffef9;
     --bg-editor: #fffef9;
@@ -20,11 +21,12 @@
     --danger: #b91c1c;
     --danger-hover: #991b1b;
     --ink: #1c1917;
-    --paper: #faf8f3;
-    --shadow-sketch: 3px 3px 0px #1c1917;
-    --shadow-sketch-sm: 2px 2px 0px #1c1917;
-    --radius: 3px;
+    --paper: #f5f3ee;
+    --shadow-sketch: 4px 4px 0px #1c1917;
+    --shadow-sketch-sm: 3px 3px 0px #1c1917;
+    --radius: 4px;
     --radius-sm: 2px;
+    --gap: 1.25rem;
     --sidebar-width: 240px;
     --transition: 0.15s ease;
     --font-hand: 'Caveat', cursive;
@@ -34,6 +36,7 @@
 [data-theme="dark"] {
     --bg: #0c0a09;
     --bg-card: #1c1917;
+    --bg-card-alt: #28211e;
     --bg-sidebar: #0c0a09;
     --bg-input: #1c1917;
     --bg-editor: #1c1917;
@@ -48,8 +51,8 @@
     --danger-hover: #ef4444;
     --ink: #f5f5f4;
     --paper: #1c1917;
-    --shadow-sketch: 3px 3px 0px #f5f5f4;
-    --shadow-sketch-sm: 2px 2px 0px #f5f5f4;
+    --shadow-sketch: 4px 4px 0px #f5f5f4;
+    --shadow-sketch-sm: 3px 3px 0px #f5f5f4;
 }
 
 /* ===== Reset & Base ===== */
@@ -232,7 +235,7 @@ a:hover {
     margin-left: var(--sidebar-width);
     flex: 1;
     padding: 2.5rem 3rem;
-    max-width: 1100px;
+    max-width: 1200px;
     width: 100%;
     position: relative;
     z-index: 1;
@@ -365,18 +368,27 @@ a:hover {
     display: inline;
 }
 
-/* ===== Card Grid ===== */
+/* ===== Card Grid — Bento ===== */
 .card-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: var(--gap);
+}
+
+/* First card spans 2 columns when enough space */
+.card-grid > :first-child {
+    grid-column: span 2;
+}
+
+@media (max-width: 600px) {
+    .card-grid > :first-child { grid-column: span 1; }
 }
 
 .card {
     background: var(--bg-card);
     border: 2px solid var(--border);
     border-radius: var(--radius);
-    padding: 1.4rem 1.5rem;
+    padding: 1.5rem 1.6rem;
     display: flex;
     gap: 1rem;
     text-decoration: none;
@@ -392,7 +404,7 @@ a:hover {
 
 .card-hover:hover {
     box-shadow: var(--shadow-sketch);
-    transform: translate(-1px, -1px);
+    transform: translate(-2px, -2px);
 }
 
 .card-body {
@@ -402,9 +414,9 @@ a:hover {
 
 .card-title {
     font-family: var(--font-hand);
-    font-size: 1.25rem;
+    font-size: 1.3rem;
     font-weight: 700;
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.4rem;
     line-height: 1.25;
 }
 
@@ -425,27 +437,25 @@ a:hover {
     gap: 0.5rem;
     font-size: 0.85rem;
     color: var(--text-secondary);
-    margin-top: 0.75rem;
-    border-top: 1px dashed var(--border-light);
-    padding-top: 0.5rem;
+    margin-top: 0.9rem;
 }
 
 .dot {
     color: var(--border-light);
 }
 
-/* ===== Article List ===== */
+/* ===== Article List — Bento ===== */
 .article-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.85rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--gap);
 }
 
 .article-card {
     background: var(--bg-card);
     border: 2px solid var(--border);
     border-radius: var(--radius);
-    padding: 1.1rem 1.4rem;
+    padding: 1.25rem 1.4rem;
     text-decoration: none;
     color: var(--text);
     display: block;
@@ -457,14 +467,14 @@ a:hover {
     text-decoration: none;
     color: var(--text);
     box-shadow: var(--shadow-sketch);
-    transform: translate(-1px, -1px);
+    transform: translate(-2px, -2px);
 }
 
 .article-title {
     font-family: var(--font-hand);
     font-size: 1.2rem;
     font-weight: 700;
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.4rem;
 }
 
 .article-preview {
@@ -578,7 +588,7 @@ a:hover {
 
 .prose hr {
     border: none;
-    border-top: 2px dashed var(--border-light);
+    border-top: 2px solid var(--border-light);
     margin: 2rem 0;
 }
 
@@ -640,7 +650,6 @@ a:hover {
     gap: 0.75rem;
     margin-top: 2rem;
     padding-top: 1.5rem;
-    border-top: 2px dashed var(--border-light);
 }
 
 /* ===== Rich Text Editor ===== */
@@ -734,8 +743,10 @@ a:hover {
     text-align: center;
     padding: 4rem 2rem;
     background: var(--bg-card);
-    border: 2px dashed var(--border-light);
+    border: 2px solid var(--border);
     border-radius: var(--radius);
+    box-shadow: var(--shadow-sketch-sm);
+    grid-column: 1 / -1;
 }
 
 .empty-state h2 {
@@ -800,8 +811,13 @@ a:hover {
         flex-direction: column;
     }
 
-    .card-grid {
+    .card-grid,
+    .article-list {
         grid-template-columns: 1fr;
+    }
+
+    .card-grid > :first-child {
+        grid-column: span 1;
     }
 
     .prose {
