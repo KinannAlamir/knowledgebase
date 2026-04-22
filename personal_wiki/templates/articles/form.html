@@ -58,6 +58,21 @@
                 <span class="toolbar-sep"></span>
                 <button type="button" class="toolbar-btn" onclick="execCmd('removeFormat')" title="Clear formatting">Clear</button>
             </div>
+            {# Image controls — visible only when an image is hovered/selected #}
+            <div id="img-controls" style="display:none; padding:4px 8px; background:var(--bg-card-alt); border:2px solid var(--border); border-top:none; border-radius:0 0 0 0; display:none; align-items:center; gap:4px; flex-wrap:wrap; font-family:var(--font-body); font-size:0.85rem;">
+                <span style="color:var(--text-secondary); font-size:0.8rem; margin-right:4px;">🖼 Image:</span>
+                <button type="button" class="toolbar-btn" onclick="imgSize('20%')">XS</button>
+                <button type="button" class="toolbar-btn" onclick="imgSize('35%')">S</button>
+                <button type="button" class="toolbar-btn" onclick="imgSize('55%')">M</button>
+                <button type="button" class="toolbar-btn" onclick="imgSize('75%')">L</button>
+                <button type="button" class="toolbar-btn" onclick="imgSize('100%')">Full</button>
+                <span class="toolbar-sep"></span>
+                <button type="button" class="toolbar-btn" onclick="imgAlign('left')">⬅ Left</button>
+                <button type="button" class="toolbar-btn" onclick="imgAlign('center')">▣ Center</button>
+                <button type="button" class="toolbar-btn" onclick="imgAlign('right')">➡ Right</button>
+                <span class="toolbar-sep"></span>
+                <button type="button" class="toolbar-btn" onclick="imgRemove()" style="color:var(--danger)">🗑 Remove</button>
+            </div>
             <div id="editor" class="rich-editor" contenteditable="true">{{ article.content | safe if article else '' }}</div>
             <textarea id="content" name="content" style="display:none">{{ article.content if article else '' }}</textarea>
         </div>

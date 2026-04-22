@@ -102,111 +102,76 @@ async function uploadImage(input) {
     editor.focus();
 }
 
-// ===== Image click toolbar =====
-const imgToolbar = document.createElement('div');
-imgToolbar.id = 'img-toolbar';
-imgToolbar.style.cssText = `
-  display:none; position:fixed; z-index:9999;
-  background:#1c1917; border:2px solid #f5f5f4; border-radius:6px;
-  padding:4px 6px; gap:4px; align-items:center; flex-wrap:wrap;
-  box-shadow:3px 3px 0 #f5f5f4; font-family:'Patrick Hand',cursive; font-size:0.85rem;
-`;
-document.body.appendChild(imgToolbar);
-
-function makeToolbarBtn(label, onClick) {
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.textContent = label;
-    b.style.cssText = 'background:transparent;border:1px solid rgba(255,255,255,0.2);color:#fafaf9;padding:2px 8px;border-radius:4px;cursor:pointer;white-space:nowrap;';
-    b.onmouseenter = () => b.style.background = 'rgba(255,255,255,0.1)';
-    b.onmouseleave = () => b.style.background = 'transparent';
-    b.addEventListener('mousedown', (e) => { e.preventDefault(); e.stopPropagation(); onClick(); });
-    return b;
-}
-
-function makeSep() {
-    const s = document.createElement('span');
-    s.style.cssText = 'width:1px;height:18px;background:rgba(255,255,255,0.2);margin:0 2px;';
-    return s;
-}
-
+// ===== Image controls panel =====
 let activeImg = null;
-let hideTimer = null;
+const imgControls = document.getElementById('img-controls');
 
-function showImgToolbar(img) {
-    clearTimeout(hideTimer);
+function selectImg(img) {
+    // Deselect previous
+    if (activeImg && activeImg !== img) {
+        activeImg.style.outline = '';
+    }
     activeImg = img;
-    imgToolbar.innerHTML = '';
-    imgToolbar.style.display = 'flex';
-
-    // Size buttons
-    [['XS','20%'],['S','35%'],['M','55%'],['L','75%'],['Full','100%']].forEach(([label, w]) => {
-        imgToolbar.appendChild(makeToolbarBtn(label, () => {
-            img.style.width = w;
-            img.style.maxWidth = w;
-            img.removeAttribute('width');
-        }));
-    });
-
-    imgToolbar.appendChild(makeSep());
-
-    imgToolbar.appendChild(makeToolbarBtn('⬅ Left', () => {
-        img.style.float = 'left';
-        img.style.margin = '0.25rem 1rem 0.5rem 0';
-        img.style.display = '';
-    }));
-    imgToolbar.appendChild(makeToolbarBtn('▣ Center', () => {
-        img.style.cssFloat = 'none';
-        img.style.float = 'none';
-        img.style.display = 'block';
-        img.style.margin = '0.75rem auto';
-    }));
-    imgToolbar.appendChild(makeToolbarBtn('➡ Right', () => {
-        img.style.float = 'right';
-        img.style.margin = '0.25rem 0 0.5rem 1rem';
-        img.style.display = '';
-    }));
-
-    imgToolbar.appendChild(makeSep());
-    imgToolbar.appendChild(makeToolbarBtn('🗑 Remove', () => {
-        img.remove();
-        imgToolbar.style.display = 'none';
-        activeImg = null;
-    }));
-
-    // Position below the image, clamped to viewport
-    const rect = img.getBoundingClientRect();
-    const tbW = 500;
-    let left = Math.max(8, Math.min(rect.left, window.innerWidth - tbW - 8));
-    let top = rect.bottom + 6;
-    // If toolbar would go below viewport, show above the image instead
-    if (top + 50 > window.innerHeight) top = rect.top - 50;
-    imgToolbar.style.left = left + 'px';
-    imgToolbar.style.top = top + 'px';
+    img.style.outline = '3px solid var(--primary)';
+    img.style.outlineOffset = '2px';
+    if (imgControls) imgControls.style.display = 'flex';
 }
 
-function scheduleHide() {
-    hideTimer = setTimeout(() => {
-        imgToolbar.style.display = 'none';
+function deselectImg() {
+    if (activeImg) {
+        activeImg.style.outline = '';
         activeImg = null;
-    }, 200);
+    }
+    if (imgControls) imgControls.style.display = 'none';
 }
 
-// Show toolbar on hover over image in editor
+function imgSize(w) {
+    if (!activeImg) return;
+    activeImg.style.width = w;
+    activeImg.style.maxWidth = w;
+    activeImg.removeAttribute('width');
+}
+
+function imgAlign(dir) {
+    if (!activeImg) return;
+    if (dir === 'left') {
+        activeImg.style.float = 'left';
+        activeImg.style.margin = '0.25rem 1rem 0.5rem 0';
+        activeImg.style.display = '';
+    } else if (dir === 'right') {
+        activeImg.style.float = 'right';
+        activeImg.style.margin = '0.25rem 0 0.5rem 1rem';
+        activeImg.style.display = '';
+    } else {
+        activeImg.style.float = 'none';
+        activeImg.style.display = 'block';
+        activeImg.style.margin = '0.75rem auto';
+    }
+}
+
+function imgRemove() {
+    if (!activeImg) return;
+    activeImg.remove();
+    deselectImg();
+}
+
+// Select image on click inside editor
 if (editor) {
-    editor.addEventListener('mouseover', (e) => {
+    editor.addEventListener('click', (e) => {
         if (e.target.tagName === 'IMG') {
-            showImgToolbar(e.target);
+            selectImg(e.target);
+        } else {
+            deselectImg();
         }
     });
-    editor.addEventListener('mouseout', (e) => {
-        if (e.target.tagName === 'IMG') scheduleHide();
-    });
 }
 
-// Keep toolbar visible while hovering over it
-imgToolbar.addEventListener('mouseover', () => clearTimeout(hideTimer));
-imgToolbar.addEventListener('mouseout', scheduleHide);
+// Deselect when clicking outside editor
+document.addEventListener('click', (e) => {
+    if (editor && !editor.contains(e.target) && imgControls && !imgControls.contains(e.target)) {
+        deselectImg();
+    }
+});
 
 // Handle paste of images directly into the editor
 if (editor) {
