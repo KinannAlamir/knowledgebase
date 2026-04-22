@@ -5,7 +5,7 @@ import uuid
 from fastapi import APIRouter, Depends, Request, UploadFile
 from fastapi.responses import JSONResponse
 
-from personal_wiki.auth import require_admin
+from personal_wiki.auth import require_editor
 from personal_wiki.database import UPLOAD_DIR
 
 router = APIRouter(prefix="/api/uploads", tags=["uploads"])
@@ -17,7 +17,7 @@ ALLOWED_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg"}
 async def upload_image(
     request: Request,
     file: UploadFile,
-    _: None = Depends(require_admin),
+    _: None = Depends(require_editor),
 ) -> JSONResponse:
     """Handle image uploads from the rich text editor."""
     if not file.filename:

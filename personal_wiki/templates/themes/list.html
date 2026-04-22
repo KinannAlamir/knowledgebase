@@ -15,7 +15,7 @@
     <div class="bento-hero">
         <p class="bento-hero-sub">Your Knowledge Base</p>
         <h1 class="bento-hero-title">Everything<br>you know,<br>organised.</h1>
-        {% if is_admin %}
+        {% if is_editor %}
         <a href="/themes/new" class="btn btn-primary" style="margin-top:auto">+ New Theme</a>
         {% endif %}
     </div>
@@ -41,14 +41,14 @@
     <div class="bento-hero">
         <p class="bento-hero-sub">Your Knowledge Base</p>
         <h1 class="bento-hero-title">Everything<br>you know,<br>organised.</h1>
-        {% if is_admin %}
+        {% if is_editor %}
         <a href="/themes/new" class="btn btn-primary" style="margin-top:auto">+ New Theme</a>
         {% endif %}
     </div>
     <div class="empty-state">
         <h2>No themes yet</h2>
         <p>Create your first theme to start building your knowledge base.</p>
-        {% if is_admin %}<a href="/themes/new" class="btn btn-primary">Create First Theme</a>{% endif %}
+        {% if is_editor %}<a href="/themes/new" class="btn btn-primary">Create First Theme</a>{% endif %}
     </div>
 </div>
 {% endif %}

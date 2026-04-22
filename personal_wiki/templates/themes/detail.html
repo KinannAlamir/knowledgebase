@@ -17,7 +17,7 @@
         {% endif %}
     </div>
     <div class="btn-group">
-        {% if is_admin %}
+        {% if is_editor %}
         <a href="/themes/{{ theme.id }}/subthemes/new" class="btn btn-primary">+ New Subtheme</a>
         <a href="/themes/{{ theme.id }}/edit" class="btn btn-secondary">Edit</a>
         <form method="post" action="/themes/{{ theme.id }}/delete" class="inline-form"
@@ -48,7 +48,7 @@
 <div class="empty-state">
     <h2>No subthemes yet</h2>
     <p>Add subthemes to organise content within "{{ theme.title }}".</p>
-    {% if is_admin %}
+    {% if is_editor %}
     <a href="/themes/{{ theme.id }}/subthemes/new" class="btn btn-primary">Add First Subtheme</a>
     {% endif %}
 </div>

@@ -10,7 +10,7 @@ from starlette.middleware.sessions import SessionMiddleware
 
 from personal_wiki.database import DATA_DIR, UPLOAD_DIR, engine
 from personal_wiki.models import Base
-from personal_wiki.routes import admin as admin_routes
+from personal_wiki.routes import auth as auth_routes
 from personal_wiki.routes import articles, subthemes, themes, uploads
 
 load_dotenv()
@@ -45,7 +45,7 @@ app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 app.mount("/uploads", StaticFiles(directory=str(UPLOAD_DIR)), name="uploads")
 
 # Include routers
-app.include_router(admin_routes.router)
+app.include_router(auth_routes.router)
 app.include_router(themes.router)
 app.include_router(subthemes.router)
 app.include_router(articles.router)

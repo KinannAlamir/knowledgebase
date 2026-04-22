@@ -6,7 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from personal_wiki.auth import is_admin, require_admin
+from personal_wiki.auth import is_editor, require_editor
 from personal_wiki.database import get_session
 from personal_wiki.models import Subtheme, Theme
 from personal_wiki.templating import templates
@@ -19,11 +19,11 @@ async def new_subtheme_form(
     request: Request,
     theme_id: int,
     session: AsyncSession = Depends(get_session),
-    _: None = Depends(require_admin),
+    _: None = Depends(require_editor),
 ) -> HTMLResponse:
     theme = await session.get(Theme, theme_id)
     return templates.TemplateResponse(
-        request, "subthemes/form.html", {"theme": theme, "subtheme": None, "is_admin": True}
+        request, "subthemes/form.html", {"theme": theme, "subtheme": None, "is_editor": True}
     )
 
 
@@ -35,7 +35,7 @@ async def create_subtheme(
     description: str = Form(""),
     icon: str = Form(""),
     session: AsyncSession = Depends(get_session),
-    _: None = Depends(require_admin),
+    _: None = Depends(require_editor),
 ) -> RedirectResponse:
     subtheme = Subtheme(theme_id=theme_id, title=title, description=description, icon=icon)
     session.add(subtheme)
@@ -59,7 +59,7 @@ async def view_subtheme(
     return templates.TemplateResponse(
         request,
         "subthemes/detail.html",
-        {"subtheme": subtheme, "theme": subtheme.theme, "is_admin": is_admin(request)},
+        {"subtheme": subtheme, "theme": subtheme.theme, "is_editor": is_editor(request)},
     )
 
 
@@ -69,7 +69,7 @@ async def edit_subtheme_form(
     theme_id: int,
     subtheme_id: int,
     session: AsyncSession = Depends(get_session),
-    _: None = Depends(require_admin),
+    _: None = Depends(require_editor),
 ) -> HTMLResponse:
     result = await session.execute(
         select(Subtheme).where(Subtheme.id == subtheme_id).options(selectinload(Subtheme.theme))
@@ -78,7 +78,7 @@ async def edit_subtheme_form(
     return templates.TemplateResponse(
         request,
         "subthemes/form.html",
-        {"theme": subtheme.theme, "subtheme": subtheme, "is_admin": True},
+        {"theme": subtheme.theme, "subtheme": subtheme, "is_editor": True},
     )
 
 
@@ -91,7 +91,7 @@ async def update_subtheme(
     description: str = Form(""),
     icon: str = Form(""),
     session: AsyncSession = Depends(get_session),
-    _: None = Depends(require_admin),
+    _: None = Depends(require_editor),
 ) -> RedirectResponse:
     subtheme = await session.get(Subtheme, subtheme_id)
     subtheme.title = title
@@ -107,7 +107,7 @@ async def delete_subtheme(
     theme_id: int,
     subtheme_id: int,
     session: AsyncSession = Depends(get_session),
-    _: None = Depends(require_admin),
+    _: None = Depends(require_editor),
 ) -> RedirectResponse:
     subtheme = await session.get(Subtheme, subtheme_id)
     await session.delete(subtheme)

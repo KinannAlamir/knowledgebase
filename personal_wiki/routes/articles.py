@@ -6,7 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from personal_wiki.auth import is_admin, require_admin
+from personal_wiki.auth import is_editor, require_editor
 from personal_wiki.database import get_session
 from personal_wiki.models import Article, Subtheme
 from personal_wiki.templating import templates
@@ -23,7 +23,7 @@ async def new_article_form(
     theme_id: int,
     subtheme_id: int,
     session: AsyncSession = Depends(get_session),
-    _: None = Depends(require_admin),
+    _: None = Depends(require_editor),
 ) -> HTMLResponse:
     result = await session.execute(
         select(Subtheme).where(Subtheme.id == subtheme_id).options(selectinload(Subtheme.theme))
@@ -32,7 +32,7 @@ async def new_article_form(
     return templates.TemplateResponse(
         request,
         "articles/form.html",
-        {"theme": subtheme.theme, "subtheme": subtheme, "article": None, "is_admin": True},
+        {"theme": subtheme.theme, "subtheme": subtheme, "article": None, "is_editor": True},
     )
 
 
@@ -44,7 +44,7 @@ async def create_article(
     title: str = Form(...),
     content: str = Form(""),
     session: AsyncSession = Depends(get_session),
-    _: None = Depends(require_admin),
+    _: None = Depends(require_editor),
 ) -> RedirectResponse:
     article = Article(subtheme_id=subtheme_id, title=title, content=content)
     session.add(article)
@@ -76,7 +76,7 @@ async def view_article(
             "article": article,
             "subtheme": article.subtheme,
             "theme": article.subtheme.theme,
-            "is_admin": is_admin(request),
+            "is_editor": is_editor(request),
         },
     )
 
@@ -88,7 +88,7 @@ async def edit_article_form(
     subtheme_id: int,
     article_id: int,
     session: AsyncSession = Depends(get_session),
-    _: None = Depends(require_admin),
+    _: None = Depends(require_editor),
 ) -> HTMLResponse:
     result = await session.execute(
         select(Article)
@@ -103,7 +103,7 @@ async def edit_article_form(
             "article": article,
             "subtheme": article.subtheme,
             "theme": article.subtheme.theme,
-            "is_admin": True,
+            "is_editor": True,
         },
     )
 
@@ -117,7 +117,7 @@ async def update_article(
     title: str = Form(...),
     content: str = Form(""),
     session: AsyncSession = Depends(get_session),
-    _: None = Depends(require_admin),
+    _: None = Depends(require_editor),
 ) -> RedirectResponse:
     article = await session.get(Article, article_id)
     article.title = title
@@ -136,7 +136,7 @@ async def delete_article(
     subtheme_id: int,
     article_id: int,
     session: AsyncSession = Depends(get_session),
-    _: None = Depends(require_admin),
+    _: None = Depends(require_editor),
 ) -> RedirectResponse:
     article = await session.get(Article, article_id)
     await session.delete(article)

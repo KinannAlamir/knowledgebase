@@ -6,7 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from personal_wiki.auth import is_admin, require_admin
+from personal_wiki.auth import is_editor, require_editor
 from personal_wiki.database import get_session
 from personal_wiki.models import Theme
 from personal_wiki.templating import templates
@@ -24,17 +24,17 @@ async def list_themes(
     )
     themes = result.scalars().all()
     return templates.TemplateResponse(
-        request, "themes/list.html", {"themes": themes, "is_admin": is_admin(request)}
+        request, "themes/list.html", {"themes": themes, "is_editor": is_editor(request)}
     )
 
 
 @router.get("/new", response_class=HTMLResponse)
 async def new_theme_form(
     request: Request,
-    _: None = Depends(require_admin),
+    _: None = Depends(require_editor),
 ) -> HTMLResponse:
     return templates.TemplateResponse(
-        request, "themes/form.html", {"theme": None, "is_admin": True}
+        request, "themes/form.html", {"theme": None, "is_editor": True}
     )
 
 
@@ -45,7 +45,7 @@ async def create_theme(
     description: str = Form(""),
     icon: str = Form(""),
     session: AsyncSession = Depends(get_session),
-    _: None = Depends(require_admin),
+    _: None = Depends(require_editor),
 ) -> RedirectResponse:
     theme = Theme(title=title, description=description, icon=icon)
     session.add(theme)
@@ -64,7 +64,7 @@ async def view_theme(
     )
     theme = result.scalar_one()
     return templates.TemplateResponse(
-        request, "themes/detail.html", {"theme": theme, "is_admin": is_admin(request)}
+        request, "themes/detail.html", {"theme": theme, "is_editor": is_editor(request)}
     )
 
 
@@ -73,11 +73,11 @@ async def edit_theme_form(
     request: Request,
     theme_id: int,
     session: AsyncSession = Depends(get_session),
-    _: None = Depends(require_admin),
+    _: None = Depends(require_editor),
 ) -> HTMLResponse:
     theme = await session.get(Theme, theme_id)
     return templates.TemplateResponse(
-        request, "themes/form.html", {"theme": theme, "is_admin": True}
+        request, "themes/form.html", {"theme": theme, "is_editor": True}
     )
 
 
@@ -89,7 +89,7 @@ async def update_theme(
     description: str = Form(""),
     icon: str = Form(""),
     session: AsyncSession = Depends(get_session),
-    _: None = Depends(require_admin),
+    _: None = Depends(require_editor),
 ) -> RedirectResponse:
     theme = await session.get(Theme, theme_id)
     theme.title = title
@@ -104,7 +104,7 @@ async def delete_theme(
     request: Request,
     theme_id: int,
     session: AsyncSession = Depends(get_session),
-    _: None = Depends(require_admin),
+    _: None = Depends(require_editor),
 ) -> RedirectResponse:
     theme = await session.get(Theme, theme_id)
     await session.delete(theme)

@@ -19,7 +19,7 @@
         {% endif %}
     </div>
     <div class="btn-group">
-        {% if is_admin %}
+        {% if is_editor %}
         <a href="/themes/{{ theme.id }}/subthemes/{{ subtheme.id }}/articles/new" class="btn btn-primary">+ New Article</a>
         <a href="/themes/{{ theme.id }}/subthemes/{{ subtheme.id }}/edit" class="btn btn-secondary">Edit</a>
         <form method="post" action="/themes/{{ theme.id }}/subthemes/{{ subtheme.id }}/delete"
@@ -49,7 +49,7 @@
 <div class="empty-state">
     <h2>No articles yet</h2>
     <p>Write your first article in "{{ subtheme.title }}".</p>
-    {% if is_admin %}
+    {% if is_editor %}
     <a href="/themes/{{ theme.id }}/subthemes/{{ subtheme.id }}/articles/new" class="btn btn-primary">
         Write First Article
     </a>
