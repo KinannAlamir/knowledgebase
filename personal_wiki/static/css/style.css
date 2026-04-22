@@ -459,6 +459,16 @@ a:hover { text-decoration: underline; }
     font-family: var(--font-body);
     font-size: 1.05rem;
 }
+.prose h1 {
+    font-family: var(--font-hand);
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 2.25rem 0 0.75rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 2px solid var(--border);
+    line-height: 1.1;
+}
+.prose h1:first-child { margin-top: 0; }
 .prose h2 {
     font-family: var(--font-hand);
     font-size: 1.75rem;
@@ -470,7 +480,7 @@ a:hover { text-decoration: underline; }
 .prose h2:first-child { margin-top: 0; }
 .prose h3 {
     font-family: var(--font-hand);
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     font-weight: 600;
     margin: 1.5rem 0 0.5rem;
 }
@@ -623,6 +633,9 @@ a:hover { text-decoration: underline; }
     transition: outline-color 0.15s;
 }
 .rich-editor img:hover { outline-color: var(--primary); }
+.rich-editor h1 { font-family: var(--font-hand); font-size: 2.5rem; font-weight: 700; margin: 1.25rem 0 0.5rem; border-bottom: 2px solid var(--border); padding-bottom: 0.3rem; line-height: 1.1; }
+.rich-editor h2 { font-family: var(--font-hand); font-size: 1.75rem; font-weight: 700; margin: 1rem 0 0.4rem; border-bottom: 1px solid var(--border-light); padding-bottom: 0.2rem; }
+.rich-editor h3 { font-family: var(--font-hand); font-size: 1.2rem; font-weight: 600; margin: 0.75rem 0 0.3rem; }
 .rich-editor blockquote {
     border-left: 3px solid var(--ink);
     padding: 0.5rem 1rem;
