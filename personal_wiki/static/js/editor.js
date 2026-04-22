@@ -155,11 +155,13 @@ function imgRemove() {
     deselectImg();
 }
 
-// Select image on click inside editor
+// Select image on mousedown inside editor
 if (editor) {
-    editor.addEventListener('click', (e) => {
-        if (e.target.tagName === 'IMG') {
-            selectImg(e.target);
+    editor.addEventListener('mousedown', (e) => {
+        const img = e.target.closest('img');
+        if (img) {
+            e.preventDefault(); // stop browser from doing its own selection
+            selectImg(img);
         } else {
             deselectImg();
         }
@@ -167,7 +169,7 @@ if (editor) {
 }
 
 // Deselect when clicking outside editor
-document.addEventListener('click', (e) => {
+document.addEventListener('mousedown', (e) => {
     if (editor && !editor.contains(e.target) && imgControls && !imgControls.contains(e.target)) {
         deselectImg();
     }
