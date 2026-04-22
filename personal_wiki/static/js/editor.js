@@ -132,7 +132,7 @@ function makeSep() {
 
 let activeImg = null;
 
-function showImgToolbar(img, x, y) {
+function showImgToolbar(img) {
     activeImg = img;
     imgToolbar.innerHTML = '';
     imgToolbar.style.display = 'flex';
@@ -187,17 +187,17 @@ function hideImgToolbar() {
 }
 
 if (editor) {
-    editor.addEventListener('click', (e) => {
+    editor.addEventListener('mousedown', (e) => {
         if (e.target.tagName === 'IMG') {
-            e.preventDefault();
-            showImgToolbar(e.target, e.clientX, e.clientY);
+            e.preventDefault(); // prevent contenteditable from stealing focus away from toolbar
+            showImgToolbar(e.target);
         } else {
             hideImgToolbar();
         }
     });
 }
 
-document.addEventListener('click', (e) => {
+document.addEventListener('mousedown', (e) => {
     if (imgToolbar.style.display !== 'none' && !imgToolbar.contains(e.target) && e.target !== activeImg) {
         hideImgToolbar();
     }
