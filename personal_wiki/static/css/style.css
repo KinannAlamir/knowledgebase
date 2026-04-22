@@ -510,9 +510,17 @@ a:hover { text-decoration: underline; }
     height: auto;
     border: 2px solid var(--border);
     border-radius: var(--radius);
-    margin: 1rem 0;
+    margin: 0.75rem 0;
     box-shadow: var(--shadow-sketch);
+    display: block;
 }
+/* Float helpers preserved from editor */
+.prose img[style*="float: left"],
+.prose img[style*="float:left"]  { margin: 0.25rem 1rem 0.5rem 0; display: inline; }
+.prose img[style*="float: right"],
+.prose img[style*="float:right"] { margin: 0.25rem 0 0.5rem 1rem; display: inline; }
+/* clearfix so floated images don't bleed out of prose */
+.prose p::after, .prose > *::after { content: ''; display: table; clear: both; }
 .prose a {
     color: var(--primary);
     text-decoration: underline;
@@ -610,7 +618,11 @@ a:hover { text-decoration: underline; }
     border-radius: var(--radius);
     margin: 0.5rem 0;
     box-shadow: var(--shadow-sketch-sm);
+    cursor: pointer;
+    outline: 2px solid transparent;
+    transition: outline-color 0.15s;
 }
+.rich-editor img:hover { outline-color: var(--primary); }
 .rich-editor blockquote {
     border-left: 3px solid var(--ink);
     padding: 0.5rem 1rem;
