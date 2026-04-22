@@ -106,7 +106,7 @@ async function uploadImage(input) {
 const imgToolbar = document.createElement('div');
 imgToolbar.id = 'img-toolbar';
 imgToolbar.style.cssText = `
-  display:none; position:fixed; z-index:1000;
+  display:none; position:fixed; z-index:9999;
   background:#1c1917; border:2px solid #f5f5f4; border-radius:6px;
   padding:4px 6px; gap:4px; align-items:center; flex-wrap:wrap;
   box-shadow:3px 3px 0 #f5f5f4; font-family:'Patrick Hand',cursive; font-size:0.85rem;
@@ -120,7 +120,7 @@ function makeToolbarBtn(label, onClick) {
     b.style.cssText = 'background:transparent;border:1px solid rgba(255,255,255,0.2);color:#fafaf9;padding:2px 8px;border-radius:4px;cursor:pointer;white-space:nowrap;';
     b.onmouseenter = () => b.style.background = 'rgba(255,255,255,0.1)';
     b.onmouseleave = () => b.style.background = 'transparent';
-    b.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); onClick(); });
+    b.addEventListener('mousedown', (e) => { e.preventDefault(); e.stopPropagation(); onClick(); });
     return b;
 }
 
@@ -131,15 +131,16 @@ function makeSep() {
 }
 
 let activeImg = null;
+let hideTimer = null;
 
 function showImgToolbar(img) {
+    clearTimeout(hideTimer);
     activeImg = img;
     imgToolbar.innerHTML = '';
     imgToolbar.style.display = 'flex';
 
     // Size buttons
-    const sizes = [['XS', '20%'], ['S', '35%'], ['M', '55%'], ['L', '75%'], ['Full', '100%']];
-    sizes.forEach(([label, w]) => {
+    [['XS','20%'],['S','35%'],['M','55%'],['L','75%'],['Full','100%']].forEach(([label, w]) => {
         imgToolbar.appendChild(makeToolbarBtn(label, () => {
             img.style.width = w;
             img.style.maxWidth = w;
@@ -149,13 +150,13 @@ function showImgToolbar(img) {
 
     imgToolbar.appendChild(makeSep());
 
-    // Alignment / float buttons
     imgToolbar.appendChild(makeToolbarBtn('⬅ Left', () => {
         img.style.float = 'left';
         img.style.margin = '0.25rem 1rem 0.5rem 0';
         img.style.display = '';
     }));
     imgToolbar.appendChild(makeToolbarBtn('▣ Center', () => {
+        img.style.cssFloat = 'none';
         img.style.float = 'none';
         img.style.display = 'block';
         img.style.margin = '0.75rem auto';
@@ -169,43 +170,43 @@ function showImgToolbar(img) {
     imgToolbar.appendChild(makeSep());
     imgToolbar.appendChild(makeToolbarBtn('🗑 Remove', () => {
         img.remove();
-        hideImgToolbar();
+        imgToolbar.style.display = 'none';
+        activeImg = null;
     }));
 
-    // Position near the image
+    // Position below the image, clamped to viewport
     const rect = img.getBoundingClientRect();
-    const tbW = 480;
-    let left = rect.left;
-    if (left + tbW > window.innerWidth) left = window.innerWidth - tbW - 8;
+    const tbW = 500;
+    let left = Math.max(8, Math.min(rect.left, window.innerWidth - tbW - 8));
+    let top = rect.bottom + 6;
+    // If toolbar would go below viewport, show above the image instead
+    if (top + 50 > window.innerHeight) top = rect.top - 50;
     imgToolbar.style.left = left + 'px';
-    imgToolbar.style.top = (rect.bottom + 6) + 'px';
+    imgToolbar.style.top = top + 'px';
 }
 
-function hideImgToolbar() {
-    imgToolbar.style.display = 'none';
-    activeImg = null;
+function scheduleHide() {
+    hideTimer = setTimeout(() => {
+        imgToolbar.style.display = 'none';
+        activeImg = null;
+    }, 200);
 }
 
+// Show toolbar on hover over image in editor
 if (editor) {
-    editor.addEventListener('mousedown', (e) => {
+    editor.addEventListener('mouseover', (e) => {
         if (e.target.tagName === 'IMG') {
-            e.preventDefault(); // prevent contenteditable from stealing focus away from toolbar
             showImgToolbar(e.target);
-        } else {
-            hideImgToolbar();
         }
+    });
+    editor.addEventListener('mouseout', (e) => {
+        if (e.target.tagName === 'IMG') scheduleHide();
     });
 }
 
-document.addEventListener('mousedown', (e) => {
-    if (imgToolbar.style.display !== 'none' && !imgToolbar.contains(e.target) && e.target !== activeImg) {
-        hideImgToolbar();
-    }
-});
-
-document.addEventListener('scroll', () => {
-    if (activeImg) showImgToolbar(activeImg);
-}, true);
+// Keep toolbar visible while hovering over it
+imgToolbar.addEventListener('mouseover', () => clearTimeout(hideTimer));
+imgToolbar.addEventListener('mouseout', scheduleHide);
 
 // Handle paste of images directly into the editor
 if (editor) {
